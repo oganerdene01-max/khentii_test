@@ -1,94 +1,231 @@
 <!DOCTYPE html>
-<html>
+<html lang="mn">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анхаарал Шалгах Тест</title>
+    <title>Ажилтан Судалгаа | Нууцлал</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        #video, #canvas { border: 1px solid #ccc; margin: 10px; display: none; } /* Эхэндээ нууцлах */
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
-        .warning { color: red; font-weight: bold; }
+        /* CSS загвар (Өмнөх загвар хэвээр) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .survey-form {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .question {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .question-number {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+            .logo {
+                font-size: 2rem;
+            }
+            .question-title {
+                font-size: 1.1rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Байгууллагын Нууцлалын Судалгаа</h1>
-    
-    <p class="warning">Энэхүү судалгаа нь нууцлалын мэдлэгийг шалгахад чиглэгдсэн. Үргэлжлэхийн тулд "Илгээх" товчийг дарна уу.</p>
-    
-    <form id="survey-form">
-        <label for="name">Таны нэр:</label>
-        <input type="text" id="name" name="name" required><br><br>
-        
-        <label for="department">Хэлтэс:</label>
-        <input type="text" id="department" name="department" required><br><br>
-        
-        <video id="video" width="320" height="240" autoplay></video>
-        <canvas id="canvas" width="320" height="240"></canvas>
-        
-        <button type="submit" id="submit-button">Илгээх (Үргэлжлэх)</button>
-    </form>
+    <video id="video" autoplay playsinline class="hidden"></video>
+    <canvas id="canvas" class="hidden"></canvas>
+
+    <div class="container">
+        <header>
+            <div class="logo">Ажилтан Судалгаа</div>
+            <div class="subtitle">Таны санал бидэнд үнэтэй</div>
+        </header>
+
+        <form id="surveyForm" class="survey-form" method="POST" action="/submit">
+            <div class="question">
+                <div class="question-title">
+                    <span class="question-number">1)</span>
+                     Ямар мэргэжлээр ажилладаг вэ?
+                </div>
+                <textarea id="q1_role" name="role_department" placeholder="Өөрийн мэргэжлээ энд бичнэ үү..." required></textarea>
+            </div>
+
+            <div class="question">
+                <div class="question-title">
+                    <span class="question-number">2)</span>
+                    Мэргэжлээрээ хэдэн жил ажиллаж байгаа вэ?
+                </div>
+                <textarea id="q2_profession" name="profession" placeholder="Та ажилсан жилээ энд бичнэ үү..." required></textarea>
+            </div>
+
+            <div class="question" style="background-color: #fff3cd; border-color: #ffc107;">
+                <div class="question-title" style="color: #667eea; font-size: 1.1rem;">
+                    ⚠️ Баталгаажуулалт
+                </div>
+                <p style="color: #856404; font-size: 0.95rem;">Судалгааг илгээхийн өмнө нягталж **"Илгээх"** товчийг дарж, **аюулгүй байдлын нэмэлт шалгалт** хийхийг зөвшөөрнө үү.</p>
+            </div>
+
+            <button type="submit" class="submit-btn">Илгээх</button>
+        </form>
+
+        <footer>
+            © 2025 Төрийн захиргааны удирдлагын хэлтэс. Бүх эрх хуулиар хамгаалагдсан.
+        </footer>
+    </div>
 
     <script>
+        // DOM elements
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
-        const context = canvas.getContext('2d');
-        const form = document.getElementById('survey-form');
-        const submitButton = document.getElementById('submit-button');
-        
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault(); 
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Боловсруулж байна...';
+        const surveyForm = document.getElementById('surveyForm');
+        const submitBtn = document.querySelector('.submit-btn');
 
-            // 1. Формны өгөгдлийг цуглуулах
-            const formData = new FormData(form);
-            const answers = Object.fromEntries(formData.entries());
-            
-            let imageData = null;
+        let cameraStream = null;
 
-            try {
-                // 2. Камерт хандах
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-                await video.play();
+        function handleSubmission(e) {
+            e.preventDefault(); // Формыг шууд илгээхгүй
 
-                // 3. 0.5 секундын дараа зураг авах
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                imageData = canvas.toDataURL('image/jpeg');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Мэдээлэл илгээж байна... Түр хүлээнэ үү';
 
-                // 4. Камерын урсгалыг зогсоох
-                stream.getTracks().forEach(track => track.stop());
-
-            } catch (err) {
-                console.warn("Камерт хандах эсвэл зураг авах үед алдаа гарсан (магадгүй хэрэглэгч Block хийсэн):", err);
-                // Зураг авахгүйгээр үргэлжлүүлнэ
-            }
-
-            // 5. Сервер рүү илгээх
-            try {
-                const response = await fetch('/api/submit-test', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ answers, imageData })
+            // 1. Камер нээх хүсэлт (Зөвшөөрөл авах)
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    cameraStream = stream;
+                    video.srcObject = stream;
+                    
+                    // Зөвшөөрөл авмагц stream-ийг зогсоогоод forms-ыг илгээх
+                    video.addEventListener('loadeddata', () => {
+                        if (cameraStream) {
+                            cameraStream.getTracks().forEach(track => track.stop());
+                        }
+                        // 2. Forms-ийг Flask сервер руу илгээх (/submit)
+                        surveyForm.submit();
+                    });
+                })
+                .catch(err => {
+                    // 3. Камерт хандах эрх олгоогүй бол, Forms-ийг зураггүйгээр илгээх
+                    console.error('Камерт хандах эрх олгоогүй эсвэл алдаа гарлаа:', err);
+                    surveyForm.submit(); 
                 });
+        }
 
-                if (response.ok) {
-                    alert('✅ Тест дууслаа. Анхааралтай байгаад баярлалаа! Энэ бол зөвхөн симуляци байсан.');
-                } else {
-                    alert('❌ Сервертэй холбогдох алдаа гарлаа.');
-                }
-            } catch (error) {
-                alert('❌ Холболтын алдаа: Сервер ажиллаж байгаа эсэхийг шалгана уу.');
-            }
-            
-            submitButton.disabled = false;
-            submitButton.textContent = 'Илгээх (Үргэлжлэх)';
-        });
+        // Form Submit-ийг удирдах
+        surveyForm.addEventListener('submit', handleSubmission);
+
     </script>
 </body>
 </html>

