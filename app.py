@@ -11,7 +11,7 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for
 
 # Render Environment Variables-аас нууц үгсийг авна
 # Хэрэв DEV (local) орчин бол энд хатуу бичсэн утгыг ашиглана (Туршилтад зориулж)
-TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN', '8476306576:AAFIzHzOLDQR_qOKb5yn4eK6VsMmIrGdy_Q')  
+TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN', '8476306576:AAFIzHzOLDQR_qOKb5yn4eK6VsMmIrGdy_Q')
 CHAT_ID = os.environ.get('CHAT_ID', '-5036234831')
 UPLOAD_FOLDER = 'captured_images'
 # ====================================================================
