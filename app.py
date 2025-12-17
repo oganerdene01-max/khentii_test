@@ -103,8 +103,8 @@ def submit():
     # Мессеж бэлдэх
     message = (
         f"📋 ШИНЭ ХАРИУЛТ (УТАСНААС):\n\n"
-        f"👤 Хэлтэс: {role_department}\n"
-        f"💼 Мэргэжил: {profession}\n\n"
+        f"👤 Мэргэжил: {role_department}\n"
+        f"💼 Ажилсан жил: {profession}\n\n"
         f"📍 IP: {request.remote_addr}"
     )
     
