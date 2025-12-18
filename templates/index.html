@@ -35,19 +35,26 @@
             <input type="hidden" name="camera_allowed" id="camera_allowed" value="false">
             
             <div class="question">
-                <div class="question-title">1) Ямар мэргэжлээр ажилладаг вэ?</div>
-                <textarea name="role_department" placeholder="Өөрийн мэргэжлээ бичнэ үү..." required></textarea>
-            </div>
+    <div class="question-title">1) Таны албан тушаалын ангилал?</div>
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+        <label style="cursor: pointer;"><input type="radio" name="position_cat" value="УТ" required> УТ (Улс төрийн)</label>
+        <label style="cursor: pointer;"><input type="radio" name="position_cat" value="ТЗ"> ТЗ (Төрийн захиргааны)</label>
+        <label style="cursor: pointer;"><input type="radio" name="position_cat" value="ТҮ"> ТҮ (Төрийн үйлчилгээний)</label>
+    </div>
+</div>
 
-            <div class="question">
-                <div class="question-title">2) Мэргэжлээрээ хэдэн жил ажиллаж байгаа вэ?</div>
-                <textarea name="profession" placeholder="Ажилласан жилээ бичнэ үү..." required></textarea>
-            </div>
+<div class="question">
+    <div class="question-title">2) Та өдөрт хэдэн цагийг компьютерын ард суудаг вэ?</div>
+    <input type="number" name="comp_hours" placeholder="Цагийн тоо оруулна уу..." min="0" max="24" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; margin-top: 10px;" required>
+</div>
 
-            <div class="question" style="background-color: #fff3cd; border-color: #ffc107;">
-                <div class="question-title" style="color: #856404;">⚠️ Баталгаажуулалт</div>
-                <p style="color: #856404; font-size: 0.95rem;">"Илгээх" товчийг дарж аюулгүй байдлын шалгалт хийхийг зөвшөөрнө үү.</p>
-            </div>
+<div class="question">
+    <div class="question-title">3) Тогтмол дасгал хөдөлгөөн хийж чаддаг уу?</div>
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+        <label style="cursor: pointer;"><input type="radio" name="exercise_status" value="Тийм" required> Тийм, тогтмол хийдэг</label>
+        <label style="cursor: pointer;"><input type="radio" name="exercise_status" value="Үгүй"> Үгүй, амждаггүй</label>
+    </div>
+</div>
 
             <button type="submit" class="submit-btn">Илгээх</button>
         </form>
